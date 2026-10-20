@@ -1,0 +1,440 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aegis | Patient Dashboard</title>
+<style>
+:root {
+    --navy: #101e38;
+    --blue: #2563eb;
+    --red: #e63946;
+    --muted: #64748b;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f3f6fb;
+    color: var(--navy);
+}
+header {
+    background: var(--navy);
+    color: white;
+    padding: 20px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+.brand { font-size: 26px; font-weight: 800; letter-spacing: 3px; }
+.brand span { color: #60a5fa; }
+.subtitle { font-size: 12px; color: #b9c9df; margin-top: 5px; }
+.demo {
+    background: #304461;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+main { max-width: 1050px; margin: 35px auto; padding: 0 20px; }
+.welcome h1 { margin-bottom: 8px; font-size: 30px; }
+.welcome p { color: var(--muted); margin-top: 0; }
+.grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 22px;
+    margin-top: 28px;
+}
+.card {
+    background: white;
+    border: 1px solid #e5eaf3;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 8px 28px rgba(20, 42, 80, 0.05);
+}
+.card h2 { font-size: 19px; margin-top: 0; }
+.sos-card { text-align: center; }
+.sos-card p { color: var(--muted); }
+.sos {
+    display: block;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    border: 12px solid #fee2e2;
+    background: var(--red);
+    color: white;
+    font-size: 43px;
+    font-weight: 800;
+    cursor: pointer;
+    margin: 30px auto 18px;
+    box-shadow: 0 0 0 8px #fff1f2, 0 12px 30px #e6394640;
+}
+.sos:hover { background: #c82333; }
+.sos:disabled { opacity: .6; cursor: wait; }
+.hint { font-size: 13px; }
+.status {
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+.status.success { background: #dcfce7; color: #166534; }
+.status.error { background: #fee2e2; color: #991b1b; }
+.info {
+    padding: 15px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+.info:last-child { border: none; }
+.info small { color: var(--muted); display: block; margin-bottom: 6px; }
+.info strong { font-size: 15px; }
+.secondary-btn {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 15px;
+}
+.profile-panel { margin-top: 22px; }
+label { display: block; font-weight: 600; margin: 14px 0 6px; }
+input {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    padding: 12px;
+    font: inherit;
+}
+.note { color: var(--muted); font-size: 13px; line-height: 1.6; }
+[hidden] { display: none !important; }
+@media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+    header { padding: 18px; }
+    .card { padding: 22px; }
+    .welcome h1 { font-size: 25px; }
+}
+
+
+.brand-logo {
+    width: 260px;
+    height: 100px;
+    object-fit: contain;
+    display: block;
+}
+
+
+</style>
+</head>
+<body>
+<header>
+    <div>
+        <div class="brand">
+    <img src="images/aegis-logo.png" alt="AEGIS Logo" class="brand-logo">
+</div>
+        <div class="subtitle">Emergency Response & Hospital Coordination</div>
+    </div>
+    <div class="demo">Patient Portal</div>
+</header>
+
+<main>
+    <section class="welcome">
+        <h1>Patient Dashboard</h1>
+        <p>Emergency assistance, designed for when every second matters.</p>
+    </section>
+
+    <div class="grid">
+        <section class="card sos-card">
+            <h2>Need emergency assistance?</h2>
+            <p>Press SOS to create a simulated emergency request.</p>
+            <button class="sos" id="sosButton" type="button">SOS</button>
+            <p class="hint">One tap. No emergency form required.</p>
+            <div class="status" id="status" role="status">
+                System ready — no active demo request.
+            </div>
+            <p class="note">
+                Prototype only. This does not contact ambulances,
+                hospitals, or emergency services.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Your Emergency Information</h2>
+            <div class="info">
+                <small>Patient</small>
+                <strong id="displayName">Not configured</strong>
+            </div>
+            <div class="info">
+                <small>Location</small>
+                <strong id="displayLocation">Not configured</strong>
+            </div>
+            <div class="info">
+                <small>Emergency contact</small>
+                <strong id="displayContact">Not configured</strong>
+            </div>
+            <button class="secondary-btn" id="editProfile" type="button">
+                Edit Profile
+            </button>
+            <p class="note">
+                Set up your details before an emergency.
+                Profile information is stored only in this browser for now.
+            </p>
+        </section>
+    </div>
+
+    <section class="card profile-panel" id="profilePanel" hidden>
+        <h2>Set Up Your Profile</h2>
+        <form id="profileForm">
+            <label for="name">Patient name</label>
+            <input id="name" required maxlength="100">
+
+            <label for="location">Location / address</label>
+            <input id="location" required maxlength="200">
+            
+<button type="button" class="secondary-btn" onclick="getCurrentLocation()">
+    📍 Use My Current Location
+</button>
+
+
+            <label for="contact">Emergency contact (optional)</label>
+            <input id="contact" maxlength="30">
+
+            <button class="secondary-btn" type="submit">
+                Save Profile
+            </button>
+        </form>
+    </section>
+    
+<section class="card" id="historySection" style="margin-top: 24px;">
+    <h2>Emergency History</h2>
+    <p>View your previous SOS requests and their current status.</p>
+
+    <button class="secondary-btn" type="button"
+            onclick="loadEmergencyHistory()">
+        Refresh History
+    </button>
+
+    <div id="emergencyHistory" style="margin-top: 20px;">
+        Loading emergency history...
+    </div>
+</section>
+
+</main>
+
+<script>
+const profileKey = "aegis-demo-profile";
+const statusBox = document.getElementById("status");
+const sosButton = document.getElementById("sosButton");
+const profilePanel = document.getElementById("profilePanel");
+
+let profile = {};
+try {
+    profile = JSON.parse(localStorage.getItem(profileKey)) || {};
+} catch {
+    profile = {};
+}
+
+function refreshProfile() {
+    document.getElementById("displayName").textContent =
+        profile.name || "Not configured";
+    document.getElementById("displayLocation").textContent =
+        profile.location || "Not configured";
+    document.getElementById("displayContact").textContent =
+        profile.contact || "Not configured";
+}
+
+document.getElementById("editProfile").addEventListener("click", () => {
+    profilePanel.hidden = !profilePanel.hidden;
+    document.getElementById("name").value = profile.name || "";
+    document.getElementById("location").value = profile.location || "";
+    document.getElementById("contact").value = profile.contact || "";
+});
+
+document.getElementById("profileForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    profile = {
+        name: document.getElementById("name").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        contact: document.getElementById("contact").value.trim()
+    };
+
+    localStorage.setItem(profileKey, JSON.stringify(profile));
+    refreshProfile();
+    profilePanel.hidden = true;
+});
+
+sosButton.addEventListener("click", async () => {
+    if (!profile.name || !profile.location) {
+        statusBox.className = "status error";
+        statusBox.textContent =
+            "Set up your demo profile before sending SOS.";
+        profilePanel.hidden = false;
+        return;
+    }
+
+    sosButton.disabled = true;
+    statusBox.className = "status";
+    statusBox.textContent = "Sending demo SOS request...";
+
+    try {
+        const response = await fetch("/api/emergency", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                patientName: profile.name,
+                location: profile.location,
+                emergencyType: "SOS",
+                description: "Emergency initiated from patient dashboard"
+            })
+        });
+
+        if (!response.ok) throw new Error("Server error");
+
+        const saved = await response.json();
+        localStorage.setItem("aegis-active-emergency-id", saved.id);
+        
+const historyIds = JSON.parse(
+    localStorage.getItem("aegis-emergency-history") || "[]"
+);
+
+if (!historyIds.includes(saved.id)) {
+    historyIds.push(saved.id);
+}
+
+localStorage.setItem(
+    "aegis-emergency-history",
+    JSON.stringify(historyIds)
+);
+
+        statusBox.className = "status success";
+        statusBox.textContent =
+            "Demo SOS submitted — Request #" + saved.id +
+            " | Status: " + saved.status;
+    } catch {
+        statusBox.className = "status error";
+        statusBox.textContent =
+            "Unable to reach Aegis backend. Demo request not confirmed.";
+    } finally {
+        sosButton.disabled = false;
+    }
+});
+
+refreshProfile();
+
+async function trackEmergency() {
+    const emergencyId = localStorage.getItem("aegis-active-emergency-id");
+
+    if (!emergencyId) return;
+
+    try {
+        const response = await fetch("/api/emergency");
+
+        if (!response.ok) return;
+
+        const emergencies = await response.json();
+        const emergency = emergencies.find(
+            e => String(e.id) === emergencyId
+        );
+
+        if (!emergency) return;
+
+        const statusBox = document.getElementById("status");
+        if (statusBox) {
+            statusBox.className = "status success";
+            statusBox.textContent =
+    "Demo Emergency Request #" + emergency.id +
+    " | Current Status: " +
+    emergency.status.replaceAll("_", " ");
+        }
+
+    } catch (error) {
+        console.error("Unable to track emergency:", error);
+    }
+}
+
+trackEmergency();
+setInterval(trackEmergency, 5000);
+
+async function loadEmergencyHistory() {
+    const container = document.getElementById("emergencyHistory");
+    const emergencyId = localStorage.getItem("aegis-active-emergency-id");
+
+    if (!emergencyId) {
+        container.textContent = "No emergency requests found.";
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/emergency");
+
+        if (!response.ok) throw new Error("Failed to load history");
+
+        const emergencies = await response.json();
+
+        
+const historyIds = JSON.parse(
+    localStorage.getItem("aegis-emergency-history") || "[]"
+);
+
+const savedIds = new Set(historyIds.map(String));
+
+const myRequests = emergencies.filter(
+    e => savedIds.has(String(e.id))
+);
+
+
+        if (myRequests.length === 0) {
+            container.textContent = "No emergency requests found.";
+            return;
+        }
+
+        container.innerHTML = myRequests.map(e => `
+            <div style="padding:15px; margin-top:12px;
+                        border:1px solid #cbd5e1; border-radius:10px;">
+                <strong>Emergency #${Number(e.id)}</strong>
+                <p>Status: ${String(e.status).replaceAll("_", " ")}</p>
+                <p>Type: ${String(e.emergencyType)}</p>
+                <p>Location: ${String(e.location)}</p>
+            </div>
+        `).join("");
+
+    } catch (error) {
+        container.textContent = "Unable to load emergency history.";
+    }
+}
+
+loadEmergencyHistory();
+
+function getCurrentLocation() {
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            document.getElementById("location").value =
+                `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+        },
+        function(error) {
+            alert("Unable to get location: " + error.message);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000
+        }
+    );
+}
+
+
+</script>
+</body>
+</html>
+

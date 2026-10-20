@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEGIS | Emergency Response Platform</title>
+<style>
+:root {
+    --navy: #09172e;
+    --blue: #2563eb;
+    --muted: #64748b;
+    --red: #e63946;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #14243d;
+    background: #fff;
+}
+a { text-decoration: none; }
+nav {
+    background: var(--navy);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 7%;
+    gap: 20px;
+}
+.logo {
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: white;
+}
+.logo span { color: #60a5fa; }
+.logo img {
+    width: 260px;
+    height: 100px;
+    object-fit: contain;
+    display: block;
+}
+.nav-links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.nav-links a { color: #dbeafe; font-size: 14px; }
+.nav-links a:hover { color: white; }
+.demo {
+    background: #253b5b;
+    color: #dbeafe;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 11px;
+}
+.hero {
+    background: linear-gradient(120deg, #09172e, #153f7c);
+    color: white;
+    padding: 100px 7% 110px;
+}
+.hero-content { max-width: 800px; }
+.eyebrow {
+    color: #93c5fd;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.hero h1 {
+    font-size: clamp(38px, 5vw, 65px);
+    line-height: 1.12;
+    letter-spacing: -1.5px;
+    margin: 20px 0;
+}
+.hero p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #cbdcf3;
+    max-width: 640px;
+}
+.actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 35px;
+}
+.btn {
+    display: inline-block;
+    padding: 15px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+}
+.btn-red { background: var(--red); color: white; }
+.btn-outline { border: 1px solid #7796c2; color: white; }
+.section {
+    max-width: 1200px;
+    margin: auto;
+    padding: 85px 24px;
+}
+.section-label {
+    color: var(--blue);
+    font-weight: 800;
+    letter-spacing: 2px;
+    font-size: 12px;
+}
+.section h2 {
+    font-size: clamp(28px, 3vw, 40px);
+    margin: 14px 0;
+}
+.section-desc {
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 660px;
+}
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 38px;
+}
+.card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 10px 30px #0c28500a;
+}
+.icon {
+    width: 55px;
+    height: 55px;
+    display: grid;
+    place-items: center;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 25px;
+    border-radius: 14px;
+}
+.card h3 { margin-top: 24px; font-size: 22px; }
+.card p {
+    color: var(--muted);
+    line-height: 1.7;
+    min-height: 85px;
+}
+.card a {
+    color: var(--blue);
+    font-weight: 700;
+}
+.process {
+    background: #f4f7fc;
+}
+.steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    margin-top: 35px;
+}
+.step {
+    background: white;
+    border-radius: 14px;
+    padding: 25px;
+}
+.step-number {
+    color: var(--blue);
+    font-weight: 800;
+    font-size: 25px;
+}
+.step p { color: var(--muted); line-height: 1.6; }
+footer {
+    background: var(--navy);
+    color: #cbd5e1;
+    padding: 35px 7%;
+    font-size: 13px;
+}
+@media(max-width: 800px) {
+    nav { align-items: flex-start; flex-direction: column; }
+    .cards { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .hero { padding: 75px 7%; }
+}
+@media(max-width: 500px) {
+    .steps { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="logo">
+    <img src="images/aegis-logo.png" alt="AEGIS Logo">
+</a>
+    <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#portals">Portals</a>
+        <a href="#workflow">How It Works</a>
+        <span class="demo">DEMO PLATFORM</span>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-content">
+        <div class="eyebrow">Emergency Response Technology</div>
+        <h1>When Every Second Matters, Coordination Saves Lives.</h1>
+        <p>
+            Aegis is a prototype emergency response platform connecting
+            patients, ambulance responders, and hospitals through one
+            coordinated digital system.
+        </p>
+        <div class="actions">
+            <a class="btn btn-red" href="patient.html">Open Patient Portal →</a>
+            <a class="btn btn-outline" href="#portals">Explore the Platform</a>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="about">
+    <div class="section-label">ABOUT AEGIS</div>
+    <h2>Built for Faster, Smarter Emergency Coordination</h2>
+    <p class="section-desc">
+        Emergency response requires communication between patients,
+        responders, and hospitals. Aegis explores how one integrated
+        platform can streamline requests, track response progress,
+        and prepare hospitals for incoming patients.
+    </p>
+</section>
+
+<section class="section" id="portals">
+    <div class="section-label">CONNECTED PORTALS</div>
+    <h2>One Platform. Three Essential Roles.</h2>
+    <p class="section-desc">
+        Each role has its own workspace while sharing emergency
+        information through a connected backend.
+    </p>
+
+    <div class="cards">
+        <div class="card">
+            <div class="icon">♡</div>
+            <h3>Patient Portal</h3>
+            <p>Initiate a demo SOS request, manage your profile, and follow emergency progress.</p>
+            <a href="patient.html">Open Patient Portal →</a>
+        </div>
+
+        
+<div class="card">
+    <div class="icon">✚</div>
+    <h3>Responder Portal</h3>
+    <p>Review emergency requests, accept assignments, and update patient transport status.</p>
+    <a href="responder.html" class="btn">Open Responder Portal →</a>
+</div>
+
+
+        <div class="card">
+            <div class="icon">▣</div>
+            <h3>Hospital Portal</h3>
+            <p>Review incoming patients, receive medical updates, and coordinate hospital readiness.</p>
+            <a href="hospital.html" class="btn">Open Hospital Portal →</a>
+    </div>
+</section>
+
+<div class="process" id="workflow">
+    <section class="section">
+        <div class="section-label">THE AEGIS WORKFLOW</div>
+        <h2>From SOS to Hospital Arrival</h2>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <h3>Emergency SOS</h3>
+                <p>A patient initiates a request through the patient portal.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <h3>Responder Assignment</h3>
+                <p>A responder accepts the emergency request.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <h3>Patient Transport</h3>
+                <p>Medical updates and transport progress are recorded.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">04</div>
+                <h3>Hospital Preparation</h3>
+                <p>The hospital receives information to prepare for arrival.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer>
+    <strong>AEGIS</strong> — Emergency Response & Hospital Coordination
+    <p>
+        Academic prototype only. Not connected to real emergency services.
+        For a real emergency in India, call 112.
+    </p>
+</footer>
+
+</body>
+</html>

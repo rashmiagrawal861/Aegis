@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Dashboard | AEGIS</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 22px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #93c5fd;
+            text-decoration: none;
+        }
+
+        .home {
+            color: #cbd5e1;
+            text-decoration: none;
+        }
+
+        main {
+            max-width: 1150px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 { margin-bottom: 8px; }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat, .panel {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 4px 18px rgba(15,23,42,0.05);
+        }
+
+        .stat span {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 34px;
+            margin-top: 10px;
+            color: #2563eb;
+        }
+
+        .panel h2 { margin-top: 0; }
+
+        .patient {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .patient-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .patient h3 { margin: 0; }
+
+        .patient p {
+            color: #475569;
+            margin: 10px 0;
+        }
+
+        .badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 30px;
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .arrived {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .pending {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 11px 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:hover { background: #1d4ed8; }
+
+        .message { color: #64748b; }
+
+        .notice {
+            margin-top: 28px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            .stats { grid-template-columns: 1fr; }
+            .patient-top { align-items: flex-start; }
+        }
+        
+.hospital-logo {
+    width: 260px;
+    height: 100px;
+    object-fit: contain;
+    display: block;
+}
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo">
+    <img src="images/aegis-logo.png" alt="AEGIS Logo" class="hospital-logo">
+</a>
+        <a href="index.html" class="home">← Home</a>
+    </header>
+
+    <main>
+        <h1>Hospital Dashboard</h1>
+        <p class="subtitle">
+            Monitor incoming emergency patients and coordinate hospital readiness.
+        </p>
+        
+
+
+
+        <div class="stats">
+            <div class="stat">
+                <span>Total Emergency Requests</span>
+                <strong id="total">0</strong>
+            </div>
+
+            <div class="stat">
+                <span>Incoming Patients</span>
+                <strong id="incoming">0</strong>
+            </div>
+
+            <div class="stat">
+                <span>Arrived at Hospital</span>
+                <strong id="arrived">0</strong>
+            </div>
+        </div>
+
+        <section class="panel">
+            <div class="patient-top">
+                <h2>Patient Coordination</h2>
+                <button onclick="loadPatients()">Refresh</button>
+            </div>
+
+            <div id="patients" class="message">
+                Loading emergency patients...
+            </div>
+        </section>
+
+        <p class="notice">
+            AEGIS is an academic emergency coordination simulation.
+            It is not connected to real hospitals or emergency services.
+        </p>
+    </main>
+
+    <script>
+        const API = "/api/emergency";
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, char => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[char]);
+        }
+
+        async function loadPatients() {
+            const container = document.getElementById("patients");
+
+            try {
+                const response = await fetch(API);
+
+                if (!response.ok) {
+                    throw new Error("Failed to load patients");
+                }
+
+                const emergencies = await response.json();
+
+                const incoming = emergencies.filter(e =>
+                    ["ACCEPTED", "EN_ROUTE", "PATIENT_PICKED_UP"]
+                        .includes(e.status)
+                );
+
+                const arrived = emergencies.filter(e =>
+                    e.status === "ARRIVED_AT_HOSPITAL"
+                );
+
+                document.getElementById("total").textContent =
+                    emergencies.length;
+
+                document.getElementById("incoming").textContent =
+                    incoming.length;
+
+                document.getElementById("arrived").textContent =
+                    arrived.length;
+
+                if (emergencies.length === 0) {
+                    container.textContent = "No emergency patients yet.";
+                    return;
+                }
+
+                container.innerHTML = emergencies.map(e => {
+                    const badgeClass =
+                        e.status === "ARRIVED_AT_HOSPITAL" ? "arrived" :
+                        e.status === "REQUESTED" ? "pending" : "";
+
+                    return `
+                        <div class="patient">
+                            <div class="patient-top">
+                                <h3>Patient Request #${escapeHtml(e.id)}</h3>
+                                <span class="badge ${badgeClass}">
+                                    ${escapeHtml(e.status).replaceAll("_", " ")}
+                                </span>
+                            </div>
+
+                            <p><strong>Patient:</strong>
+                                ${escapeHtml(e.patientName)}</p>
+
+                            <p><strong>Emergency:</strong>
+                                ${escapeHtml(e.emergencyType)}</p>
+
+                            <p><strong>Location:</strong>
+                                ${escapeHtml(e.location)}</p>
+
+                            
+<p><strong>Description:</strong>
+    ${escapeHtml(e.description)}</p>
+
+<p><strong>Hospital Readiness:</strong>
+    ${e.status === "ARRIVED_AT_HOSPITAL" && e.hospitalStatus !== "READY"
+    ? "Not Confirmed Before Arrival"
+    : escapeHtml(e.hospitalStatus || "NOT_READY").replaceAll("_", " ")}
+</p>
+
+${["ACCEPTED", "EN_ROUTE", "PATIENT_PICKED_UP"].includes(e.status)
+    && e.hospitalStatus !== "READY"
+    ? `<button onclick="markHospitalReady(${Number(e.id)})">
+         Mark Hospital Ready
+       </button>`
+    : ""}
+</div>
+
+                    `;
+                }).join("");
+
+            } catch (error) {
+                container.textContent =
+                    "Unable to load patients. Check that Spring Boot is running.";
+            }
+        }
+        
+async function markHospitalReady(id) {
+    try {
+        const response = await fetch(
+            `/api/emergency/${id}/hospital-ready`,
+            { method: "PUT" }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to update hospital readiness");
+        }
+
+        alert("Hospital marked as READY!");
+        await loadPatients();
+
+    } catch (error) {
+        alert("Could not update hospital readiness.");
+    }
+}
+
+
+        loadPatients();
+        setInterval(loadPatients, 5000);
+    </script>
+</body>
+</html>

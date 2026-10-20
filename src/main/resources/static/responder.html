@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responder Dashboard | AEGIS</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    header {
+      background: #0f172a;
+      color: white;
+      padding: 20px 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #93c5fd;
+      text-decoration: none;
+    }
+    header a.back {
+      color: #cbd5e1;
+      text-decoration: none;
+    }
+    main { max-width: 1100px; margin: 38px auto; padding: 0 20px; }
+    .intro { margin-bottom: 28px; }
+    .intro h1 { margin-bottom: 8px; font-size: 32px; }
+    .intro p { color: #64748b; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .stat, .panel {
+      background: white;
+      border-radius: 14px;
+      padding: 23px;
+      box-shadow: 0 4px 18px rgba(15,23,42,.05);
+    }
+    .stat span { color: #64748b; font-size: 14px; }
+    .stat strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 32px;
+      color: #1d4ed8;
+    }
+    .panel h2 { margin-top: 0; }
+    .request {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 15px;
+    }
+    .request-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+    .request h3 { margin: 0; }
+    .request p { margin: 9px 0; color: #475569; }
+    .badge {
+      padding: 6px 11px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    .badge.requested { background: #fee2e2; color: #b91c1c; }
+    button {
+      border: 0;
+      background: #2563eb;
+      color: white;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover { background: #1d4ed8; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .message { color: #64748b; padding: 12px 0; }
+    .notice { margin-top: 28px; color: #64748b; font-size: 13px; }
+    @media(max-width: 650px) {
+      .stats { grid-template-columns: 1fr; }
+      .request-top { align-items: flex-start; }
+      .intro h1 { font-size: 26px; }
+    }
+    
+.brand-logo {
+    width: 260px;
+    height: 100px;
+    object-fit: contain;
+    display: block;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="index.html">
+    <img src="images/aegis-logo.png" alt="AEGIS Logo" class="brand-logo">
+</a>
+    <a class="back" href="index.html">← Home</a>
+  </header>
+
+  <main>
+    <div class="intro">
+      <h1>Responder Dashboard</h1>
+      <p>Review and manage incoming emergency requests.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span>Total Requests</span>
+        <strong id="total">0</strong>
+      </div>
+      <div class="stat">
+        <span>Pending Requests</span>
+        <strong id="pending">0</strong>
+      </div>
+      <div class="stat">
+    <span>Active Emergencies</span>
+    <strong id="active">0</strong>
+</div>
+    </div>
+
+    <section class="panel">
+      <div class="request-top">
+        <h2>Emergency Requests</h2>
+        <button onclick="loadRequests()">Refresh</button>
+      </div>
+      <div id="requests" class="message">Loading requests...</div>
+    </section>
+
+    <p class="notice">
+      AEGIS is an academic simulation, not a real emergency response service.
+    </p>
+  </main>
+
+  <script>
+    const API = "/api/emergency";
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
+    async function loadRequests() {
+      const container = document.getElementById("requests");
+      container.textContent = "Loading requests...";
+
+      try {
+        const response = await fetch(API);
+        if (!response.ok) throw new Error("Unable to fetch requests");
+
+        const requests = await response.json();
+
+        document.getElementById("total").textContent = requests.length;
+        document.getElementById("pending").textContent =
+          requests.filter(r => r.status === "REQUESTED").length;
+        document.getElementById("active").textContent =
+    requests.filter(r =>
+        ["ACCEPTED", "EN_ROUTE", "PATIENT_PICKED_UP"].includes(r.status)
+    ).length;
+        if (requests.length === 0) {
+          container.textContent = "No emergency requests yet.";
+          return;
+        }
+
+        container.innerHTML = requests.map(request => `
+          <div class="request">
+            <div class="request-top">
+              <h3>Emergency #${escapeHtml(request.id)}</h3>
+              <span class="badge ${request.status === "REQUESTED" ? "requested" : ""}">
+                ${escapeHtml(request.status)}
+              </span>
+            </div>
+            <p><strong>Patient:</strong> ${escapeHtml(request.patientName)}</p>
+            <p><strong>Type:</strong> ${escapeHtml(request.emergencyType)}</p>
+            <p><strong>Location:</strong> ${escapeHtml(request.location)}</p>
+            
+<p>
+  
+<a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(request.location || '')}&travelmode=driving"
+
+     target="_blank"
+     rel="noopener noreferrer"
+     class="secondary-btn">
+    🚑 Get Directions
+  </a>
+</p>
+
+            <p><strong>Description:</strong> ${escapeHtml(request.description)}</p>
+            
+${request.status === "REQUESTED"
+    ? `<button onclick="acceptEmergency(${Number(request.id)})">
+         Accept Request
+       </button>`
+    : ""}
+
+${request.status === "ACCEPTED"
+    ? `<button onclick="updateStatus(${Number(request.id)}, 'EN_ROUTE')">
+         Start Journey →
+       </button>`
+    : ""}
+
+${request.status === "EN_ROUTE"
+    ? `<button onclick="updateStatus(${Number(request.id)}, 'PATIENT_PICKED_UP')">
+         Patient Picked Up →
+       </button>`
+    : ""}
+
+${request.status === "PATIENT_PICKED_UP"
+    ? `<button onclick="updateStatus(${Number(request.id)}, 'ARRIVED_AT_HOSPITAL')">
+         Arrived at Hospital ✓
+       </button>`
+    : ""}
+
+          </div>
+        `).join("");
+      } catch (error) {
+        container.textContent =
+          "Could not load emergencies. Check that Spring Boot is running.";
+      }
+    }
+
+async function acceptEmergency(id) {
+    try {
+        const response = await fetch(`/api/emergency/${id}/accept`, {
+            method: "PUT"
+        });
+        
+
+
+
+        if (!response.ok) {
+            throw new Error("Failed to accept emergency");
+        }
+
+        alert("Emergency accepted successfully!");
+        await loadRequests();
+
+    } catch (error) {
+        alert("Could not accept emergency. Please try again.");
+    }
+}
+async function updateStatus(id, status) {
+    try {
+        const response = await fetch(
+            `/api/emergency/${id}/status?status=${encodeURIComponent(status)}`,
+            { method: "PUT" }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to update status");
+        }
+
+        alert("Emergency status updated successfully!");
+        await loadRequests();
+
+    } catch (error) {
+        alert("Could not update emergency status.");
+    }
+}
+    loadRequests();
+  </script>
+</body>
+</html>
